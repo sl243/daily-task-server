@@ -18,14 +18,14 @@ async function run() {
     try{
         const taskCollection = client.db('dailyTask').collection('task')
         const addtasksCollection = client.db('dailyTask').collection('addtasks')
-      
-        //  get task
-        app.get('/alltask', async(req, res) => {
-          const query = {};
-          const alltask = await taskCollection.find(query).toArray();
-          res.send(alltask)
-        })
         
+
+        app.get('/mytask', async(req, res) => {
+          const query = {};
+          const mytask = await taskCollection.find(query).toArray();
+          res.send(mytask)
+        })
+
         // task added in databse
         app.post('/tasks', async(req, res) => {
             const dailyTask = req.body;
@@ -40,12 +40,21 @@ async function run() {
           const result = await addtasksCollection.insertOne(addtask);
           res.send(result)
         })
+
+        // delete my task
+        app.delete('/mytask/:id', async (req, res) => {
+          const id = req.params.id;
+          const query = { _id: ObjectId(id) };
+          const result = await taskCollection.deleteOne(query);
+          res.send(result)
+      })
     }
     finally{
 
     }
-    run().catch(console.dir)
+    
 }
+run().catch(console.dir)
 
 
 app.get('/', (req, res) => {
